@@ -106,6 +106,26 @@ const RecommendationForm = () => {
         rainfall: 'High',
         humidity: 'High'
       });
+    } else if (presetKey === 'up-wheat') {
+      setFormData({
+        state: 'Uttar Pradesh',
+        district: 'Varanasi',
+        village: 'Rohaniya',
+        landArea: '4',
+        landUnit: 'acres',
+        soilType: 'Alluvial Soil',
+        soilPH: '7.0',
+        previousCrop: 'Rice',
+        season: 'Rabi',
+        waterAvailability: 'High',
+        irrigationMethod: 'Flood',
+        availableFertilizer: 'Adequate',
+        availableLabour: 'Sufficient',
+        budget: '45000',
+        temperature: '21',
+        rainfall: 'Medium',
+        humidity: 'Medium'
+      });
     } else {
       setFormData({
         state: 'Rajasthan',
@@ -202,27 +222,53 @@ const RecommendationForm = () => {
       {/* ────────────────────────────────────────────────────────── */}
       {/* 1. TOP HEADER & QUICK DEMO PRESETS                         */}
       {/* ────────────────────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-[#E8E6D5] shadow-xs">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#262619] tracking-tight">
-            Farm Advisory Wizard
-          </h1>
-          <p className="text-sm text-[#6B6B47] mt-1">
-            Complete the 5 steps to calculate tailor-made crop suitability and input schedules
-          </p>
+      <div className="bg-white p-5 sm:p-6 rounded-3xl border border-[#E8E6D5] shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h1 className="text-xl sm:text-2xl font-extrabold text-[#262619] tracking-tight">
+              {language === 'hi' ? 'खेत सलाहकार फॉर्म (5 आसान चरण)' : 'Farm Advisory Wizard'}
+            </h1>
+            <p className="text-xs text-[#6B6B47] mt-0.5">
+              {language === 'hi' 
+                ? 'अपने खेत की जानकारी चुनें और वैज्ञानिक फसल व सिंचाई सलाह प्राप्त करें' 
+                : 'Select your farm conditions for tailored crop recommendations'}
+            </p>
+          </div>
         </div>
 
-        {/* Demo Values 1-Click Fill */}
-        <div className="flex items-center gap-2 self-start sm:self-auto">
-          <Button
-            variant="outline"
-            size="sm"
-            icon={Sparkles}
+        {/* 1-Tap Quick Presets for Farmers */}
+        <div className="pt-2 border-t border-[#E8E6D5] flex flex-wrap items-center gap-2">
+          <span className="text-xs font-bold text-[#6B6B47]">
+            {language === 'hi' ? 'त्वरित उदाहरण:' : 'Quick Presets:'}
+          </span>
+          <button
+            type="button"
             onClick={() => applyDemoPreset('punjab-wheat')}
-            className="text-xs"
+            className="px-3 py-1.5 rounded-xl bg-[#FAFAF7] hover:bg-[#F5F4EE] border border-[#E8E6D5] text-xs font-bold text-[#262619] flex items-center gap-1.5 transition-all active:scale-95"
           >
-            {t('useDemoValues')}
-          </Button>
+            <span>🌾 पंजाब (गेहूं)</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => applyDemoPreset('maharashtra-cotton')}
+            className="px-3 py-1.5 rounded-xl bg-[#FAFAF7] hover:bg-[#F5F4EE] border border-[#E8E6D5] text-xs font-bold text-[#262619] flex items-center gap-1.5 transition-all active:scale-95"
+          >
+            <span>🌿 महाराष्ट्र (कपास/सोयाबीन)</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => applyDemoPreset('up-wheat')}
+            className="px-3 py-1.5 rounded-xl bg-[#FAFAF7] hover:bg-[#F5F4EE] border border-[#E8E6D5] text-xs font-bold text-[#262619] flex items-center gap-1.5 transition-all active:scale-95"
+          >
+            <span>🌾 यू.पी. (धान-गेहूं)</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => applyDemoPreset('rajasthan-mustard')}
+            className="px-3 py-1.5 rounded-xl bg-[#FAFAF7] hover:bg-[#F5F4EE] border border-[#E8E6D5] text-xs font-bold text-[#262619] flex items-center gap-1.5 transition-all active:scale-95"
+          >
+            <span>☀️ राजस्थान (बाजरा/सरसों)</span>
+          </button>
         </div>
       </div>
 
@@ -387,11 +433,51 @@ const RecommendationForm = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {/* 1-Tap Visual Soil Cards for Farmers */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-[#4A4A2E] block">
+                {language === 'hi' ? 'अपनी मिट्टी चुनें (कार्ड पर क्लिक करें):' : 'Select Soil Type (Tap card to choose):'}
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                {[
+                  { name: 'Loamy', labelHi: 'दोमट मिट्टी', emoji: '🟤', desc: 'गेहूं व सब्जियां (उपजाऊ)', ph: '6.8' },
+                  { name: 'Black Soil', labelHi: 'काली मिट्टी', emoji: '⚫', desc: 'कपास व सोयाबीन', ph: '7.4' },
+                  { name: 'Sandy Loam', labelHi: 'बलुई / रेतीली', emoji: '🟡', desc: 'बाजरा व सरसों', ph: '7.2' },
+                  { name: 'Alluvial Soil', labelHi: 'जलोढ़ मिट्टी', emoji: '🌾', desc: 'नहर क्षेत्र, धान-गेहूं', ph: '7.0' },
+                  { name: 'Red Soil', labelHi: 'लाल मिट्टी', emoji: '🔴', desc: 'दलहन व तिलहन', ph: '6.5' },
+                  { name: 'Clay Soil', labelHi: 'चिकनी मिट्टी', emoji: '🧱', desc: 'धान व जलभराव', ph: '6.9' },
+                ].map((s) => {
+                  const isSelected = formData.soilType === s.name;
+                  return (
+                    <button
+                      key={s.name}
+                      type="button"
+                      onClick={() => {
+                        setFormData(prev => ({ ...prev, soilType: s.name, soilPH: s.ph }));
+                        if (errors.soilType) setErrors(prev => ({ ...prev, soilType: '' }));
+                      }}
+                      className={`p-3 rounded-2xl border text-left transition-all ${
+                        isSelected 
+                          ? 'border-[#5FA83D] bg-[#5FA83D]/10 ring-2 ring-[#5FA83D]/30 shadow-xs' 
+                          : 'border-[#E8E6D5] bg-[#FAFAF7] hover:bg-[#F5F4EE]'
+                      }`}
+                    >
+                      <div className="text-2xl mb-1">{s.emoji}</div>
+                      <p className="text-xs font-extrabold text-[#262619]">
+                        {language === 'hi' ? s.labelHi : s.name}
+                      </p>
+                      <p className="text-[10px] text-[#6B6B47] mt-0.5 leading-tight">{s.desc}</p>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2">
               {/* Soil Type */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold uppercase tracking-wider text-[#4A4A2E] block">
-                  Soil Type *
+                  Soil Type Dropdown *
                 </label>
                 <select
                   name="soilType"
@@ -404,12 +490,6 @@ const RecommendationForm = () => {
                   ))}
                 </select>
                 {errors.soilType && <p className="text-xs text-red-600 font-medium">{errors.soilType}</p>}
-                <p className="text-[11px] text-[#6B6B47]">
-                  {formData.soilType === 'Loamy' && 'Loamy: Highly fertile, well-balanced moisture retention & drainage.'}
-                  {formData.soilType === 'Black Soil' && 'Black Soil: High clay, moisture retentive, ideal for cotton & pulses.'}
-                  {formData.soilType === 'Sandy Loam' && 'Sandy Loam: Drains quickly, warm, excellent for root crops & mustard.'}
-                  {formData.soilType === 'Alluvial Soil' && 'Alluvial Soil: Rich silt deposited by rivers, suited for wheat & cereals.'}
-                </p>
               </div>
 
               {/* Soil pH */}
@@ -475,11 +555,48 @@ const RecommendationForm = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {/* 1-Tap Visual Water Cards for Farmers */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-[#4A4A2E] block">
+                {language === 'hi' ? 'पानी की उपलब्धता (कार्ड पर क्लिक करें):' : 'Water Availability (Tap card to choose):'}
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                {[
+                  { level: 'High', labelHi: 'प्रचुर पानी (नहर / बोरवेल)', emoji: '🌊', desc: 'धान व गन्ने जैसी फसलों के लिए पर्याप्त' },
+                  { level: 'Medium', labelHi: 'मध्यम पानी (ट्यूबवेल)', emoji: '💧', desc: 'गेहूं व सरसों के लिए 4-5 सिंचाई' },
+                  { level: 'Low', labelHi: 'कम पानी (वर्षा / सूखा)', emoji: '🌧️', desc: 'चना, बाजरा व सरसों (कम पानी वाली फसलें)' },
+                ].map((w) => {
+                  const isSelected = formData.waterAvailability === w.level;
+                  return (
+                    <button
+                      key={w.level}
+                      type="button"
+                      onClick={() => {
+                        setFormData(prev => ({ ...prev, waterAvailability: w.level }));
+                        if (errors.waterAvailability) setErrors(prev => ({ ...prev, waterAvailability: '' }));
+                      }}
+                      className={`p-3.5 rounded-2xl border text-left transition-all ${
+                        isSelected 
+                          ? 'border-[#0284C7] bg-[#0284C7]/10 ring-2 ring-[#0284C7]/30 shadow-xs' 
+                          : 'border-[#E8E6D5] bg-[#FAFAF7] hover:bg-[#F5F4EE]'
+                      }`}
+                    >
+                      <div className="text-2xl mb-1">{w.emoji}</div>
+                      <p className="text-xs font-extrabold text-[#262619]">
+                        {language === 'hi' ? w.labelHi : `${w.level} Water`}
+                      </p>
+                      <p className="text-[10px] text-[#6B6B47] mt-0.5 leading-tight">{w.desc}</p>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2">
               {/* Water Availability */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold uppercase tracking-wider text-[#4A4A2E] block">
-                  Water Availability *
+                  Water Availability Dropdown *
                 </label>
                 <select
                   name="waterAvailability"
@@ -492,11 +609,6 @@ const RecommendationForm = () => {
                   ))}
                 </select>
                 {errors.waterAvailability && <p className="text-xs text-red-600 font-medium">{errors.waterAvailability}</p>}
-                <p className="text-[11px] text-[#6B6B47]">
-                  {formData.waterAvailability === 'Medium' && 'Approx. 300,000 Liters available per acre for the season.'}
-                  {formData.waterAvailability === 'Low' && 'Approx. 150,000 Liters; best for drought-hardy crops like Mustard.'}
-                  {formData.waterAvailability === 'High' && 'Approx. 500,000 Liters; suited for sugarcane and paddy.'}
-                </p>
               </div>
 
               {/* Irrigation Method */}

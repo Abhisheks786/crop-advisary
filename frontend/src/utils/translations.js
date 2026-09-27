@@ -78,7 +78,18 @@ export const TRANSLATIONS = {
     fertilizerDose: "Fertilizer Schedule",
     labourEstimate: "Labour Needed",
     rotationAdvice: "Crop Rotation Strategy",
-    criticalStages: "Critical Irrigation Stages"
+    criticalStages: "Critical Irrigation Stages",
+    listenVoice: "Listen to Advisory",
+    whatsappShare: "Share on WhatsApp",
+    wateringRoundsTitle: "Watering Schedule (Tubewell / Pump)",
+    wateringRoundsDesc: "4 to 5 watering rounds total (~3-4 hours pump run per acre)",
+    pumpHoursPerAcre: "~3-4 hours per acre",
+    adequateWaterSupply: "Adequate water supply for Rabi cycle",
+    netProfitTitle: "Estimated Net Margin (Profit)",
+    todayTaskTitle: "What to do in field today?",
+    viewAnalyticsToggle: "Advanced Agronomy Charts & Trends",
+    quickSoilChoice: "Tap your soil type",
+    quickWaterChoice: "Tap your water source"
   },
   
   hi: {
@@ -151,7 +162,18 @@ export const TRANSLATIONS = {
     fertilizerDose: "खाद की खुराक",
     labourEstimate: "मजदूरी आवश्यकता",
     rotationAdvice: "फसल चक्र सलाह",
-    criticalStages: "महत्वपूर्ण सिंचाई अवस्थाएं"
+    criticalStages: "महत्वपूर्ण सिंचाई अवस्थाएं",
+    listenVoice: "सलाह सुनें (बोलकर)",
+    whatsappShare: "व्हाट्सएप पर भेजें",
+    wateringRoundsTitle: "सिंचाई एवं मोटर का समय",
+    wateringRoundsDesc: "कुल 4 से 5 बार सिंचाई (प्रति एकड़ ~3-4 घंटे ट्यूबवेल चलाएं)",
+    pumpHoursPerAcre: "~3-4 घंटे प्रति एकड़",
+    adequateWaterSupply: "रबी फसल के लिए पानी पर्याप्त है",
+    netProfitTitle: "अनुमानित शुद्ध बचत (शुद्ध मुनाफा)",
+    todayTaskTitle: "आज खेत में क्या काम करें?",
+    viewAnalyticsToggle: "विस्तृत तकनीकी आंकड़े और ग्राफ देखें",
+    quickSoilChoice: "अपनी मिट्टी चुनें",
+    quickWaterChoice: "पानी का साधन चुनें"
   },
 
   pa: {
@@ -224,7 +246,18 @@ export const TRANSLATIONS = {
     fertilizerDose: "ਖਾਦ ਦੀ ਯੋਜਨਾ",
     labourEstimate: "ਮਜ਼ਦੂਰੀ",
     rotationAdvice: "ਫ਼ਸਲੀ ਚੱਕਰ",
-    criticalStages: "ਜ਼ਰੂਰੀ ਸਿੰਚਾਈ ਪੜਾਅ"
+    criticalStages: "ਜ਼ਰੂਰੀ ਸਿੰਚਾਈ ਪੜਾਅ",
+    listenVoice: "ਸਲਾਹ ਸੁਣੋ (ਆਵਾਜ਼)",
+    whatsappShare: "ਵ੍ਹਟਸਐਪ 'ਤੇ ਭੇਜੋ",
+    wateringRoundsTitle: "ਸਿੰਚਾਈ ਅਤੇ ਮੋਟਰ ਦਾ ਸਮਾਂ",
+    wateringRoundsDesc: "ਕੁੱਲ 4 ਤੋਂ 5 ਵਾਰ ਪਾਣੀ (ਪ੍ਰਤੀ ਏਕੜ ~3-4 ਘੰਟੇ ਟਿਊਬਵੈੱਲ ਚਲਾਓ)",
+    pumpHoursPerAcre: "~3-4 ਘੰਟੇ ਪ੍ਰਤੀ ਏਕੜ",
+    adequateWaterSupply: "ਹਾੜ੍ਹੀ ਫਸਲ ਲਈ ਪਾਣੀ ਕਾਫੀ ਹੈ",
+    netProfitTitle: "ਅੰਦਾਜ਼ਨ ਸ਼ੁੱਧ ਮੁਨਾਫਾ",
+    todayTaskTitle: "ਅੱਜ ਖੇਤ ਵਿੱਚ ਕੀ ਕੰਮ ਕਰਨਾ ਹੈ?",
+    viewAnalyticsToggle: "ਵਿਸਥਾਰਪੂਰਵਕ ਤਕਨੀਕੀ ਅੰਕੜੇ ਅਤੇ ਗ੍ਰਾਫ",
+    quickSoilChoice: "ਆਪਣੀ ਮਿੱਟੀ ਚੁਣੋ",
+    quickWaterChoice: "ਪਾਣੀ ਦਾ ਸਾਧਨ ਚੁਣੋ"
   },
 
   ta: {

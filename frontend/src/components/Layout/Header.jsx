@@ -131,41 +131,78 @@ const Header = ({ onToggleSidebar, user }) => {
           <span className="text-[#4A4A2E] text-[11px] font-semibold">Rabi Season</span>
         </div>
 
-        {/* Multilingual Selector Dropdown */}
-        <div className="relative" ref={langRef}>
+        {/* Multilingual Selector: Direct 1-tap buttons + Dropdown */}
+        <div className="flex items-center gap-1 bg-[#FAFAF7] p-1 rounded-2xl border border-[#E8E6D5]">
           <button
-            onClick={() => setShowLangMenu(!showLangMenu)}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-[#4A4A2E] bg-[#FAFAF7] hover:bg-[#F5F4EE] border border-[#E8E6D5] transition-colors min-h-[44px]"
-            aria-label="Change Language"
+            type="button"
+            onClick={() => setLanguage('en')}
+            className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              language === 'en'
+                ? 'bg-[#5C7A3C] text-white shadow-xs'
+                : 'text-[#4A4A2E] hover:bg-[#F5F4EE]'
+            }`}
           >
-            <Languages size={16} className="text-[#5C7A3C]" />
-            <span className="hidden sm:inline">{currentLangObj.native}</span>
+            EN
+          </button>
+          <button
+            type="button"
+            onClick={() => setLanguage('hi')}
+            className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              language === 'hi'
+                ? 'bg-[#5C7A3C] text-white shadow-xs'
+                : 'text-[#4A4A2E] hover:bg-[#F5F4EE]'
+            }`}
+          >
+            हिन्दी
+          </button>
+          <button
+            type="button"
+            onClick={() => setLanguage('pa')}
+            className={`hidden sm:block px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              language === 'pa'
+                ? 'bg-[#5C7A3C] text-white shadow-xs'
+                : 'text-[#4A4A2E] hover:bg-[#F5F4EE]'
+            }`}
+          >
+            ਪੰਜਾਬੀ
           </button>
 
-          {showLangMenu && (
-            <div className="absolute right-0 mt-2 w-40 bg-white rounded-2xl shadow-xl border border-[#E8E6D5] py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-              <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#6B6B47] border-b border-[#E8E6D5] mb-1">
-                Select Language
+          {/* More languages dropdown */}
+          <div className="relative" ref={langRef}>
+            <button
+              onClick={() => setShowLangMenu(!showLangMenu)}
+              className="p-1.5 rounded-xl text-[#4A4A2E] hover:bg-[#F5F4EE] transition-colors"
+              aria-label="More Languages"
+              title="More Languages"
+            >
+              <Languages size={15} className="text-[#5C7A3C]" />
+            </button>
+
+            {showLangMenu && (
+              <div className="absolute right-0 mt-2 w-40 bg-white rounded-2xl shadow-xl border border-[#E8E6D5] py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#6B6B47] border-b border-[#E8E6D5] mb-1">
+                  Select Language
+                </div>
+                {SUPPORTED_LANGUAGES.map((lang) => (
+                  <button
+                    key={lang.code}
+                    onClick={() => {
+                      setLanguage(lang.code);
+                      setShowLangMenu(false);
+                    }}
+                    className={`w-full text-left px-3.5 py-2 text-xs font-semibold flex items-center justify-between transition-colors ${
+                      language === lang.code 
+                        ? 'bg-[#5FA83D]/10 text-[#4A4A2E] font-bold' 
+                        : 'text-[#262619] hover:bg-[#FAFAF7]'
+                    }`}
+                  >
+                    <span>{lang.native}</span>
+                    <span className="text-[10px] text-[#6B6B47] uppercase font-mono">{lang.code}</span>
+                  </button>
+                ))}
               </div>
-              {SUPPORTED_LANGUAGES.map((lang) => (
-                <button
-                  key={lang.code}
-                  onClick={() => {
-                    setLanguage(lang.code);
-                    setShowLangMenu(false);
-                  }}
-                  className={`w-full text-left px-3.5 py-2 text-xs font-semibold flex items-center justify-between transition-colors ${
-                    language === lang.code 
-                      ? 'bg-[#5FA83D]/10 text-[#4A4A2E] font-bold' 
-                      : 'text-[#262619] hover:bg-[#FAFAF7]'
-                  }`}
-                >
-                  <span>{lang.native}</span>
-                  <span className="text-[10px] text-[#6B6B47] uppercase font-mono">{lang.code}</span>
-                </button>
-              ))}
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         {/* Notifications Dropdown */}
