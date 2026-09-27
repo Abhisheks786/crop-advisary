@@ -1,16 +1,35 @@
 import React from 'react';
+import { Sprout } from 'lucide-react';
+import Button from './Button';
 
-const EmptyState = ({ title, message, icon: Icon, action }) => {
+/**
+ * Enhanced Agriculture-Themed EmptyState Component
+ * Provides clear, friendly non-technical guidance to farmers when no records exist.
+ */
+const EmptyState = ({
+  title = "No advisories yet",
+  message = "Enter your farm details to receive a personalized crop recommendation with irrigation and resource planning.",
+  icon: Icon = Sprout,
+  actionText = "Get Your First Advisory",
+  onAction,
+  action,
+  className = ""
+}) => {
   return (
-    <div className="flex flex-col items-center justify-center py-12 px-4 text-center bg-white rounded-xl border border-gray-100 border-dashed">
-      {Icon && (
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gray-50 mb-4">
-          <Icon className="h-8 w-8 text-gray-400" aria-hidden="true" />
-        </div>
-      )}
-      <h3 className="text-lg font-medium text-gray-900 mb-1">{title}</h3>
-      {message && <p className="text-sm text-gray-500 max-w-sm mx-auto mb-6">{message}</p>}
-      {action && <div>{action}</div>}
+    <div className={`flex flex-col items-center justify-center py-16 px-6 text-center bg-white rounded-2xl border-2 border-dashed border-[#D1CDBC] shadow-xs ${className}`}>
+      <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-[#F5F4EE] border border-[#E8E6D5] mb-5 text-[#5C7A3C] shadow-inner">
+        <Icon className="h-10 w-10 text-[#5C7A3C]" aria-hidden="true" />
+      </div>
+      <h3 className="text-xl font-bold font-sans text-[#262619] mb-2">{title}</h3>
+      {message && <p className="text-base text-[#6B6B47] max-w-md mx-auto mb-6 leading-relaxed">{message}</p>}
+      
+      {action ? (
+        action
+      ) : onAction ? (
+        <Button variant="primary" size="lg" onClick={onAction}>
+          {actionText}
+        </Button>
+      ) : null}
     </div>
   );
 };

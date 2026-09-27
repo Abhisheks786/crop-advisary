@@ -158,3 +158,23 @@ h1, h2, h3, h4, .font-heading {
 .fade-in {
   animation: fadeIn 0.35s ease-out forwards;
 }
+
+/* Mobile Safe-Area & Touch Targets */
+@media (max-width: 1024px) {
+  body {
+    padding-bottom: 72px; /* space for MobileNav bar */
+  }
+}
+
+/* Print Optimization for Consolidated Farm Plan */
+@media print {
+  header, nav, aside, [class*="print:hidden"] {
+    display: none !important;
+  }
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+  }
+}
+

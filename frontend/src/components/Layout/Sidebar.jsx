@@ -15,7 +15,8 @@ import {
   LogOut, 
   X,
   Compass,
-  BarChart3
+  BarChart3,
+  FileText
 } from 'lucide-react';
 
 const Sidebar = ({ isOpen, onClose, user, onLogout }) => {
@@ -30,6 +31,7 @@ const Sidebar = ({ isOpen, onClose, user, onLogout }) => {
       title: 'FARM TOOLS',
       items: [
         { name: 'Crop Advisor', path: '/recommend', icon: Sprout, badge: 'AI' },
+        { name: 'Farm Plan', path: '/plan', icon: FileText, badge: 'New' },
         { name: 'Irrigation Planner', path: '/irrigation', icon: Droplets, badge: null },
         { name: 'Crop Rotation', path: '/rotation', icon: RefreshCw, badge: null },
         { name: 'Resource Planner', path: '/resources', icon: Package, badge: null },

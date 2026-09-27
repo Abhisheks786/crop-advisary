@@ -1,47 +1,54 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Sprout, Droplets, History, Shield, User } from 'lucide-react';
+import { LayoutDashboard, Sprout, Droplets, History, FileText } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
+/**
+ * Mobile Bottom Navigation Bar
+ * Optimized for farmers on smartphones with >=48px touch targets,
+ * visual icon indicators, and multilingual label translation.
+ */
 const MobileNav = ({ user }) => {
+  const { t } = useLanguage();
+
   const navItems = [
-    { name: 'Home', path: '/dashboard', icon: LayoutDashboard },
-    { name: 'Advisor', path: '/recommend', icon: Sprout, highlight: true },
-    { name: 'Water', path: '/irrigation', icon: Droplets },
-    { name: 'History', path: '/history', icon: History },
-    { 
-      name: user?.role === 'admin' ? 'Admin' : 'Me', 
-      path: user?.role === 'admin' ? '/admin' : '/dashboard', 
-      icon: user?.role === 'admin' ? Shield : User 
-    },
+    { name: t('home'), path: '/dashboard', icon: LayoutDashboard },
+    { name: t('advisory'), path: '/recommend', icon: Sprout, highlight: true },
+    { name: t('irrigation'), path: '/irrigation', icon: Droplets },
+    { name: t('farmPlan'), path: '/plan', icon: FileText },
+    { name: t('history'), path: '/history', icon: History }
   ];
 
   return (
-    <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#12372A]/95 backdrop-blur-md border-t border-[#262619]/80 px-2 py-1.5 shadow-2xl">
-      <nav className="flex items-center justify-around">
+    <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#1A1A11]/95 backdrop-blur-md border-t border-[#4A4A2E]/50 px-2 py-1 shadow-2xl safe-area-bottom">
+      <nav className="flex items-center justify-around" aria-label="Mobile Navigation">
         {navItems.map((item) => (
           <NavLink
-            key={item.name}
+            key={item.path}
             to={item.path}
+            aria-label={item.name}
             className={({ isActive }) =>
-              `flex flex-col items-center py-1 px-3 rounded-xl transition-all duration-150 ${
+              `flex flex-col items-center justify-center min-h-[48px] px-2.5 py-1 rounded-xl transition-all duration-150 select-none ${
                 isActive
-                  ? 'text-lime-400 font-bold scale-105'
-                  : 'text-[#D4CEBA]/70 hover:text-[#F5F4EE] font-medium'
+                  ? 'text-[#8BC563] font-extrabold'
+                  : 'text-[#D4CEBA] hover:text-white font-medium'
               }`
             }
           >
             {({ isActive }) => (
               <>
-                <div className={`p-1.5 rounded-xl ${
+                <div className={`p-1.5 rounded-xl transition-transform ${
                   item.highlight && !isActive
-                    ? 'bg-[#6B6B47]/50 text-lime-300'
+                    ? 'bg-[#5FA83D] text-white shadow-xs'
                     : isActive 
-                      ? 'bg-[#333320]/80 text-lime-300 shadow-sm' 
+                      ? 'bg-[#333320] text-[#8BC563] scale-110 shadow-xs' 
                       : ''
                 }`}>
-                  <item.icon size={20} />
+                  <item.icon size={20} aria-hidden="true" />
                 </div>
-                <span className="text-[10px] mt-0.5 tracking-tight">{item.name}</span>
+                <span className="text-[10px] mt-0.5 tracking-tight font-sans">
+                  {item.name}
+                </span>
               </>
             )}
           </NavLink>

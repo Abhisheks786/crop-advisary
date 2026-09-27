@@ -1,28 +1,30 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Loader2, 
   ArrowRight, 
   ArrowLeft, 
   MapPin, 
   Sprout, 
   Droplets, 
   Sun, 
-  Sparkles, 
   CheckCircle2, 
   HelpCircle,
   FlaskConical,
-  Trees,
   Layers,
-  Zap
+  Sparkles,
+  ClipboardCheck,
+  Calendar,
+  AlertCircle
 } from 'lucide-react';
 import { generateRecommendation } from '../services/recommendationService';
 import { INDIAN_STATES, SOIL_TYPES, SEASONS, WATER_LEVELS, IRRIGATION_METHODS, PREVIOUS_CROPS, RAINFALL_CATEGORIES } from '../utils/constants';
 import Button from '../components/UI/Button';
 import ButtonGroup from '../components/UI/ButtonGroup';
+import { useLanguage } from '../context/LanguageContext';
 
 const RecommendationForm = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -48,10 +50,11 @@ const RecommendationForm = () => {
   });
 
   const steps = [
-    { title: 'Location', desc: 'State, district & region', icon: MapPin },
-    { title: 'Farm Details', desc: 'Soil, area & season', icon: Sprout },
-    { title: 'Resources', desc: 'Water & irrigation type', icon: Droplets },
-    { title: 'Environment', desc: 'Climate & temperature', icon: Sun },
+    { title: '1. Farm Details', desc: 'Location & land area', icon: MapPin },
+    { title: '2. Soil Info', desc: 'Type, pH & rotation', icon: Layers },
+    { title: '3. Water & Tech', desc: 'Volume & irrigation', icon: Droplets },
+    { title: '4. Season & Climate', desc: 'Cycle & temperatures', icon: Sun },
+    { title: '5. Review & Submit', desc: 'Verify before generating', icon: ClipboardCheck },
   ];
 
   const handleChange = (e) => {
@@ -62,8 +65,8 @@ const RecommendationForm = () => {
     }
   };
 
-  const applyPreset = (presetName) => {
-    if (presetName === 'punjab-wheat') {
+  const applyDemoPreset = (presetKey = 'punjab-wheat') => {
+    if (presetKey === 'punjab-wheat') {
       setFormData({
         state: 'Punjab',
         district: 'Ludhiana',
@@ -78,17 +81,17 @@ const RecommendationForm = () => {
         irrigationMethod: 'Flood',
         availableFertilizer: 'Adequate',
         availableLabour: 'Sufficient',
-        budget: '60000',
+        budget: '50000',
         temperature: '20',
         rainfall: 'Medium',
         humidity: 'Medium'
       });
-    } else if (presetName === 'maharashtra-cotton') {
+    } else if (presetKey === 'maharashtra-cotton') {
       setFormData({
         state: 'Maharashtra',
         district: 'Nagpur',
         village: 'Katol',
-        landArea: '8',
+        landArea: '6',
         landUnit: 'acres',
         soilType: 'Black Soil',
         soilPH: '7.4',
@@ -98,12 +101,12 @@ const RecommendationForm = () => {
         irrigationMethod: 'Drip',
         availableFertilizer: 'Adequate',
         availableLabour: 'Moderate',
-        budget: '80000',
-        temperature: '30',
+        budget: '65000',
+        temperature: '28',
         rainfall: 'High',
         humidity: 'High'
       });
-    } else if (presetName === 'rajasthan-mustard') {
+    } else {
       setFormData({
         state: 'Rajasthan',
         district: 'Jaipur',
@@ -117,33 +120,36 @@ const RecommendationForm = () => {
         waterAvailability: 'Low',
         irrigationMethod: 'Sprinkler',
         availableFertilizer: 'Limited',
-        availableLabour: 'Moderate',
+        availableLabour: 'Sufficient',
         budget: '35000',
         temperature: '22',
         rainfall: 'Low',
         humidity: 'Low'
       });
     }
+    setErrors({});
   };
 
-  const validateStep = () => {
+  const validateCurrentStep = () => {
     const newErrors = {};
+
     if (currentStep === 0) {
-      if (!formData.state) newErrors.state = 'Please select your state';
-      if (!formData.district) newErrors.district = 'Please select or enter district';
+      if (!formData.state) newErrors.state = 'Please select a state';
+      if (!formData.district) newErrors.district = 'Please select a district';
+      if (!formData.landArea || Number(formData.landArea) <= 0) {
+        newErrors.landArea = 'Enter a valid land area (e.g. 5 acres)';
+      }
     } else if (currentStep === 1) {
-      if (!formData.landArea || parseFloat(formData.landArea) <= 0) newErrors.landArea = 'Enter valid positive land area';
-      if (!formData.soilType) newErrors.soilType = 'Select soil classification';
-      if (!formData.season) newErrors.season = 'Select active cultivation season';
-      if (formData.soilPH && (parseFloat(formData.soilPH) < 3 || parseFloat(formData.soilPH) > 11)) {
-        newErrors.soilPH = 'Agricultural soil pH is typically between 3.5 and 10.0';
+      if (!formData.soilType) newErrors.soilType = 'Please select your soil type';
+      const ph = Number(formData.soilPH);
+      if (isNaN(ph) || ph < 3.5 || ph > 10.5) {
+        newErrors.soilPH = 'Enter a realistic pH value between 4.0 and 9.5';
       }
     } else if (currentStep === 2) {
-      if (!formData.waterAvailability) newErrors.waterAvailability = 'Specify water availability';
-      if (!formData.irrigationMethod) newErrors.irrigationMethod = 'Select primary irrigation technique';
+      if (!formData.waterAvailability) newErrors.waterAvailability = 'Select water availability level';
+      if (!formData.irrigationMethod) newErrors.irrigationMethod = 'Select primary irrigation method';
     } else if (currentStep === 3) {
-      if (!formData.temperature) newErrors.temperature = 'Temperature is required';
-      if (!formData.rainfall) newErrors.rainfall = 'Rainfall category is required';
+      if (!formData.season) newErrors.season = 'Select crop season (Kharif, Rabi, or Zaid)';
     }
 
     setErrors(newErrors);
@@ -151,591 +157,572 @@ const RecommendationForm = () => {
   };
 
   const handleNext = () => {
-    if (validateStep()) {
-      setCurrentStep(prev => prev + 1);
+    if (validateCurrentStep()) {
+      setCurrentStep(prev => Math.min(steps.length - 1, prev + 1));
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   const handlePrev = () => {
-    setCurrentStep(prev => prev - 1);
+    setCurrentStep(prev => Math.max(0, prev - 1));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateStep()) return;
+    if (!validateCurrentStep()) return;
 
-    setLoading(true);
     try {
+      setLoading(true);
       const payload = {
-        state: formData.state,
-        district: formData.district,
-        village: formData.village,
-        landArea: parseFloat(formData.landArea) || 5,
-        landUnit: formData.landUnit || 'acres',
-        soilType: formData.soilType,
-        soilPH: parseFloat(formData.soilPH) || 6.8,
-        previousCrop: formData.previousCrop || 'None',
-        season: formData.season,
-        waterAvailability: formData.waterAvailability,
-        irrigationMethod: formData.irrigationMethod,
-        temperature: parseFloat(formData.temperature) || 24,
-        rainfall: formData.rainfall,
-        humidity: formData.humidity,
-        budget: parseFloat(formData.budget) || 0
+        ...formData,
+        landArea: Number(formData.landArea),
+        soilPH: Number(formData.soilPH),
+        budget: Number(formData.budget) || 0,
+        temperature: Number(formData.temperature) || 25,
       };
 
-      const response = await generateRecommendation(payload);
-      const resultData = response.data;
-
-      // Navigate to Results page with recommendation state
-      navigate('/results', { 
-        state: { 
-          recommendation: resultData,
-          input: payload 
-        } 
-      });
+      const res = await generateRecommendation(payload);
+      if (res.data) {
+        navigate('/results', { state: { recommendation: res.data } });
+      }
     } catch (err) {
-      console.error('Error calculating recommendations:', err);
-      // Fallback direct calculation route
-      navigate('/results', { 
-        state: { 
-          input: formData 
-        } 
-      });
+      console.error('Error generating recommendation:', err);
+      setErrors({ submit: 'Could not connect to advisory engine. Try using demo mode values.' });
     } finally {
       setLoading(false);
     }
   };
 
-  const currentDistricts = INDIAN_STATES[formData.state] || ['Central District', 'North District', 'South District'];
-  const progressPercent = ((currentStep + 1) / steps.length) * 100;
+  const selectedStateObj = INDIAN_STATES.find(s => s.name === formData.state);
+  const districts = selectedStateObj ? selectedStateObj.districts : ['Ludhiana', 'Amritsar', 'Patiala', 'Jalandhar'];
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 fade-in">
+    <div className="max-w-4xl mx-auto py-4 sm:py-6 px-4 space-y-8 font-sans">
       {/* ────────────────────────────────────────────────────────── */}
-      {/* HEADER & QUICK PRESETS                                     */}
+      {/* 1. TOP HEADER & QUICK DEMO PRESETS                         */}
       {/* ────────────────────────────────────────────────────────── */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FAFAF7] text-[#333320] text-xs font-bold border border-[#E8E6D5]/60 mb-2">
-              <Sparkles size={14} className="text-[#6B6B47]" />
-              <span>Multi-Factor Explainable Scoring Engine</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight font-display">
-              Precision Crop Advisory Wizard
-            </h1>
-            <p className="text-sm text-slate-600 mt-1">
-              Enter your farm metrics to receive ranked crop matches, stage-wise irrigation, and input resource plans.
-            </p>
-          </div>
-
-          {/* 1-Click Demonstration Presets */}
-          <div className="flex sm:flex-col gap-2">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
-              <Zap size={13} className="text-amber-500" /> Quick Presets:
-            </span>
-            <ButtonGroup>
-              <Button 
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => applyPreset('punjab-wheat')}
-              >
-                🌾 Punjab Wheat
-              </Button>
-              <Button 
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => applyPreset('maharashtra-cotton')}
-              >
-                🌱 MH Cotton
-              </Button>
-              <Button 
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => applyPreset('rajasthan-mustard')}
-              >
-                🌼 RJ Mustard
-              </Button>
-            </ButtonGroup>
-          </div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-[#E8E6D5] shadow-xs">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#262619] tracking-tight">
+            Farm Advisory Wizard
+          </h1>
+          <p className="text-sm text-[#6B6B47] mt-1">
+            Complete the 5 steps to calculate tailor-made crop suitability and input schedules
+          </p>
         </div>
 
-        {/* ────────────────────────────────────────────────────────── */}
-        {/* STEPPER PROGRESS BAR                                       */}
-        {/* ────────────────────────────────────────────────────────── */}
-        <div className="pt-6">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold text-[#333320] uppercase tracking-wider">
-              Step {currentStep + 1} of {steps.length}: <span className="text-slate-900">{steps[currentStep].title}</span>
-            </span>
-            <span className="text-xs font-bold text-[#4A4A2E] bg-[#FAFAF7] px-2.5 py-0.5 rounded-full border border-[#E8E6D5]">
-              {Math.round(progressPercent)}% Completed
-            </span>
-          </div>
-
-          {/* Continuous Progress Bar */}
-          <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden mb-6">
-            <div 
-              className="bg-gradient-to-r from-[#6B6B47] to-lime-400 h-full rounded-full transition-all duration-300 ease-out"
-              style={{ width: `${progressPercent}%` }}
-            />
-          </div>
-
-          {/* Stepper Tabs */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            {steps.map((step, idx) => {
-              const isDone = idx < currentStep;
-              const isCurrent = idx === currentStep;
-              return (
-                <Button
-                  key={step.title}
-                  type="button"
-                  variant="ghost"
-                  onClick={() => idx <= currentStep && setCurrentStep(idx)}
-                  disabled={idx > currentStep}
-                  className={`flex items-center gap-2.5 p-3 rounded-2xl border text-left transition-all ${
-                    isCurrent 
-                      ? 'bg-[#FAFAF7] border-[#9D9678]/80 ring-2 ring-[#E8E6D5] shadow-xs' 
-                      : isDone 
-                        ? 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100' 
-                        : 'bg-slate-50/50 border-slate-100 text-slate-400 cursor-not-allowed opacity-60'
-                  }`}
-                >
-                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs ${
-                    isCurrent 
-                      ? 'bg-[#6B6B47] text-white shadow-sm' 
-                      : isDone 
-                        ? 'bg-[#F5F4EE] text-[#333320]' 
-                        : 'bg-slate-200 text-slate-500'
-                  }`}>
-                    {isDone ? <CheckCircle2 size={16} /> : `0${idx + 1}`}
-                  </div>
-                  <div className="min-w-0">
-                    <p className={`text-xs font-bold truncate ${isCurrent ? 'text-[#1A1A11] font-display' : 'text-slate-700'}`}>
-                      {step.title}
-                    </p>
-                    <p className="text-[10px] text-slate-400 truncate hidden sm:block">{step.desc}</p>
-                  </div>
-                </Button>
-              );
-            })}
-          </div>
+        {/* Demo Values 1-Click Fill */}
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <Button
+            variant="outline"
+            size="sm"
+            icon={Sparkles}
+            onClick={() => applyDemoPreset('punjab-wheat')}
+            className="text-xs"
+          >
+            {t('useDemoValues')}
+          </Button>
         </div>
       </div>
 
       {/* ────────────────────────────────────────────────────────── */}
-      {/* FORM STEPS CONTENT                                         */}
+      {/* 2. PROGRESS STEPPER (5 VISIBLE STEPS)                      */}
       {/* ────────────────────────────────────────────────────────── */}
-      <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 space-y-6">
-        {/* STEP 1: LOCATION */}
+      <div className="bg-white rounded-2xl border border-[#E8E6D5] p-3 sm:p-5 shadow-xs overflow-x-auto">
+        <div className="flex items-center justify-between min-w-[550px] gap-2">
+          {steps.map((step, idx) => {
+            const Icon = step.icon;
+            const isCompleted = idx < currentStep;
+            const isActive = idx === currentStep;
+
+            return (
+              <React.Fragment key={idx}>
+                <div 
+                  onClick={() => { if (idx < currentStep) setCurrentStep(idx); }}
+                  className={`flex items-center gap-2.5 cursor-pointer select-none ${
+                    idx < currentStep ? 'opacity-90 hover:opacity-100' : ''
+                  }`}
+                >
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 transition-colors ${
+                    isCompleted 
+                      ? 'bg-[#5FA83D] text-white shadow-xs' 
+                      : isActive 
+                      ? 'bg-[#4A4A2E] text-white ring-4 ring-[#4A4A2E]/15 shadow-xs' 
+                      : 'bg-[#F5F4EE] text-[#6B6B47] border border-[#E8E6D5]'
+                  }`}>
+                    {isCompleted ? <CheckCircle2 size={18} /> : <Icon size={16} />}
+                  </div>
+                  <div>
+                    <p className={`text-xs font-bold leading-tight ${isActive ? 'text-[#262619]' : 'text-[#6B6B47]'}`}>
+                      {step.title}
+                    </p>
+                    <p className="text-[10px] text-[#6B6B47] hidden sm:block">{step.desc}</p>
+                  </div>
+                </div>
+                {idx < steps.length - 1 && (
+                  <div className={`flex-1 h-0.5 min-w-[20px] rounded-full ${
+                    idx < currentStep ? 'bg-[#5FA83D]' : 'bg-[#E8E6D5]'
+                  }`} />
+                )}
+              </React.Fragment>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ────────────────────────────────────────────────────────── */}
+      {/* 3. STEP CONTENT FORMS                                      */}
+      {/* ────────────────────────────────────────────────────────── */}
+      <form onSubmit={handleSubmit} className="bg-white rounded-3xl border border-[#E8E6D5] p-6 sm:p-8 shadow-xs space-y-6">
+        {/* STEP 1: FARM DETAILS & LOCATION */}
         {currentStep === 0 && (
-          <div className="space-y-6 fade-in">
-            <div className="border-b border-slate-100 pb-4">
-              <h3 className="text-lg font-bold text-slate-900 font-display flex items-center gap-2">
-                <MapPin className="text-[#6B6B47]" size={20} />
-                <span>Geographic Location</span>
-              </h3>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Helps identify regional agro-climatic zones, soil baselines, and seasonal rainfall distributions.
+          <div className="space-y-6">
+            <div className="border-b border-[#E8E6D5] pb-4">
+              <h2 className="text-xl font-bold text-[#262619] flex items-center gap-2">
+                <MapPin size={22} className="text-[#5C7A3C]" />
+                Step 1: Farm Location & Land Area
+              </h2>
+              <p className="text-xs text-[#6B6B47] mt-1">
+                Tell us where your farm is located so we can map localized climate and soil baselines.
               </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                  State <span className="text-[#6B6B47]">*</span>
+              {/* State */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold uppercase tracking-wider text-[#4A4A2E] block">
+                  State / Province *
                 </label>
                 <select
                   name="state"
                   value={formData.state}
-                  onChange={(e) => {
-                    const newState = e.target.value;
-                    const districts = INDIAN_STATES[newState] || [];
-                    setFormData(prev => ({ 
-                      ...prev, 
-                      state: newState, 
-                      district: districts[0] || '' 
-                    }));
-                  }}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:bg-white focus:border-[#5FA83D] focus:ring-2 focus:ring-[#8BC56340] outline-none font-medium"
+                  onChange={handleChange}
+                  className="w-full h-11 px-3.5 rounded-xl border border-[#E8E6D5] bg-[#FAFAF7] text-sm text-[#262619] font-medium focus:border-[#5FA83D] focus:ring-2 focus:ring-[#8BC56340] outline-none"
                 >
-                  {Object.keys(INDIAN_STATES).map(st => (
-                    <option key={st} value={st}>{st}</option>
+                  {INDIAN_STATES.map(s => (
+                    <option key={s.name} value={s.name}>{s.name}</option>
                   ))}
                 </select>
-                {errors.state && <p className="text-xs text-red-600 mt-1 font-medium">{errors.state}</p>}
+                {errors.state && <p className="text-xs text-red-600 font-medium">{errors.state}</p>}
+                <p className="text-[11px] text-[#6B6B47]">e.g. Punjab, Maharashtra, Rajasthan</p>
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                  District <span className="text-[#6B6B47]">*</span>
+              {/* District */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold uppercase tracking-wider text-[#4A4A2E] block">
+                  District *
                 </label>
                 <select
                   name="district"
                   value={formData.district}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:bg-white focus:border-[#5FA83D] focus:ring-2 focus:ring-[#8BC56340] outline-none font-medium"
+                  className="w-full h-11 px-3.5 rounded-xl border border-[#E8E6D5] bg-[#FAFAF7] text-sm text-[#262619] font-medium focus:border-[#5FA83D] focus:ring-2 focus:ring-[#8BC56340] outline-none"
                 >
-                  {currentDistricts.map(dist => (
-                    <option key={dist} value={dist}>{dist}</option>
+                  {districts.map(d => (
+                    <option key={d} value={d}>{d}</option>
                   ))}
                 </select>
-                {errors.district && <p className="text-xs text-red-600 mt-1 font-medium">{errors.district}</p>}
+                {errors.district && <p className="text-xs text-red-600 font-medium">{errors.district}</p>}
+                <p className="text-[11px] text-[#6B6B47]">e.g. Ludhiana, Nashik, Jaipur</p>
               </div>
 
-              <div className="sm:col-span-2">
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                  Village / Tehsil / Field Identifier <span className="text-slate-400 font-normal">(Optional)</span>
+              {/* Village */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold uppercase tracking-wider text-[#4A4A2E] block">
+                  Village or Taluka (Optional)
                 </label>
                 <input
                   type="text"
                   name="village"
                   value={formData.village}
                   onChange={handleChange}
-                  placeholder="e.g., North Block Farm #3"
-                  className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:bg-white focus:border-[#5FA83D] focus:ring-2 focus:ring-[#8BC56340] outline-none"
+                  placeholder="e.g. Samrala, Katol"
+                  className="w-full h-11 px-3.5 rounded-xl border border-[#E8E6D5] bg-[#FAFAF7] text-sm text-[#262619] font-medium focus:border-[#5FA83D] focus:ring-2 focus:ring-[#8BC56340] outline-none"
                 />
               </div>
-            </div>
-          </div>
-        )}
 
-        {/* STEP 2: FARM DETAILS */}
-        {currentStep === 1 && (
-          <div className="space-y-6 fade-in">
-            <div className="border-b border-slate-100 pb-4">
-              <h3 className="text-lg font-bold text-slate-900 font-display flex items-center gap-2">
-                <Sprout className="text-[#6B6B47]" size={20} />
-                <span>Soil & Cultivation Parameters</span>
-              </h3>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Core soil physical properties, pH chemistry, land dimensions, and active season.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {/* Land Area with Unit Toggle */}
-              <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                  🌾 Total Cultivation Land Area <span className="text-[#6B6B47]">*</span>
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold uppercase tracking-wider text-[#4A4A2E] block">
+                  Land Area *
                 </label>
                 <div className="flex gap-2">
                   <input
                     type="number"
-                    step="0.1"
+                    step="0.5"
                     min="0.1"
                     name="landArea"
                     value={formData.landArea}
                     onChange={handleChange}
-                    placeholder="5.0"
-                    className="flex-1 px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:bg-white focus:border-[#5FA83D] focus:ring-2 focus:ring-[#8BC56340] outline-none font-bold text-slate-900"
+                    className="flex-1 h-11 px-3.5 rounded-xl border border-[#E8E6D5] bg-[#FAFAF7] text-sm text-[#262619] font-bold focus:border-[#5FA83D] focus:ring-2 focus:ring-[#8BC56340] outline-none"
                   />
                   <select
                     name="landUnit"
                     value={formData.landUnit}
                     onChange={handleChange}
-                    className="w-32 px-3 py-3 rounded-xl bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700 focus:bg-white outline-none"
+                    className="w-28 h-11 px-3 rounded-xl border border-[#E8E6D5] bg-[#F5F4EE] text-xs font-bold text-[#4A4A2E] focus:outline-none"
                   >
                     <option value="acres">Acres</option>
                     <option value="hectares">Hectares</option>
                   </select>
                 </div>
-                {errors.landArea && <p className="text-xs text-red-600 mt-1 font-medium">{errors.landArea}</p>}
+                {errors.landArea && <p className="text-xs text-red-600 font-medium">{errors.landArea}</p>}
+                <p className="text-[11px] text-[#6B6B47]">Clear unit: {formData.landArea || 5} {formData.landUnit || 'acres'}</p>
               </div>
+            </div>
+          </div>
+        )}
 
-              {/* Season Selector */}
-              <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                  📅 Target Cultivation Season <span className="text-[#6B6B47]">*</span>
-                </label>
-                <select
-                  name="season"
-                  value={formData.season}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold focus:bg-white focus:border-[#5FA83D] focus:ring-2 focus:ring-[#8BC56340] outline-none text-[#262619]"
-                >
-                  {SEASONS.map(s => (
-                    <option key={s} value={s}>{s} Season</option>
-                  ))}
-                </select>
-                {errors.season && <p className="text-xs text-red-600 mt-1 font-medium">{errors.season}</p>}
-              </div>
+        {/* STEP 2: SOIL INFORMATION */}
+        {currentStep === 1 && (
+          <div className="space-y-6">
+            <div className="border-b border-[#E8E6D5] pb-4">
+              <h2 className="text-xl font-bold text-[#262619] flex items-center gap-2">
+                <Layers size={22} className="text-[#5C7A3C]" />
+                Step 2: Soil Profile & History
+              </h2>
+              <p className="text-xs text-[#6B6B47] mt-1">
+                Your soil's texture, pH balance, and crop rotation history dictate crop suitability.
+              </p>
+            </div>
 
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {/* Soil Type */}
-              <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                  🟤 Primary Soil Type <span className="text-[#6B6B47]">*</span>
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold uppercase tracking-wider text-[#4A4A2E] block">
+                  Soil Type *
                 </label>
                 <select
                   name="soilType"
                   value={formData.soilType}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:bg-white focus:border-[#5FA83D] focus:ring-2 focus:ring-[#8BC56340] outline-none font-medium"
+                  className="w-full h-11 px-3.5 rounded-xl border border-[#E8E6D5] bg-[#FAFAF7] text-sm text-[#262619] font-medium focus:border-[#5FA83D] focus:ring-2 focus:ring-[#8BC56340] outline-none"
                 >
-                  {SOIL_TYPES.map(st => (
-                    <option key={st} value={st}>{st}</option>
+                  {SOIL_TYPES.map(soil => (
+                    <option key={soil} value={soil}>{soil}</option>
                   ))}
                 </select>
-                {errors.soilType && <p className="text-xs text-red-600 mt-1 font-medium">{errors.soilType}</p>}
+                {errors.soilType && <p className="text-xs text-red-600 font-medium">{errors.soilType}</p>}
+                <p className="text-[11px] text-[#6B6B47]">
+                  {formData.soilType === 'Loamy' && 'Loamy: Highly fertile, well-balanced moisture retention & drainage.'}
+                  {formData.soilType === 'Black Soil' && 'Black Soil: High clay, moisture retentive, ideal for cotton & pulses.'}
+                  {formData.soilType === 'Sandy Loam' && 'Sandy Loam: Drains quickly, warm, excellent for root crops & mustard.'}
+                  {formData.soilType === 'Alluvial Soil' && 'Alluvial Soil: Rich silt deposited by rivers, suited for wheat & cereals.'}
+                </p>
               </div>
 
-              {/* Soil pH with helper range */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-                    🧪 Soil pH Value
+              {/* Soil pH */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#4A4A2E] block">
+                    Soil pH Level *
                   </label>
-                  <span className="text-[11px] text-slate-500">Ideal range: 6.0 – 7.5</span>
+                  <span className="text-xs font-mono font-bold text-[#5C7A3C] bg-[#5FA83D]/10 px-2 py-0.5 rounded">
+                    pH {formData.soilPH}
+                  </span>
                 </div>
                 <input
                   type="number"
                   step="0.1"
-                  min="3.0"
-                  max="11.0"
+                  min="4.0"
+                  max="9.5"
                   name="soilPH"
                   value={formData.soilPH}
                   onChange={handleChange}
-                  placeholder="6.8"
-                  className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:bg-white focus:border-[#5FA83D] focus:ring-2 focus:ring-[#8BC56340] outline-none font-bold"
+                  className="w-full h-11 px-3.5 rounded-xl border border-[#E8E6D5] bg-[#FAFAF7] text-sm text-[#262619] font-bold focus:border-[#5FA83D] focus:ring-2 focus:ring-[#8BC56340] outline-none"
                 />
-                {errors.soilPH && <p className="text-xs text-red-600 mt-1 font-medium">{errors.soilPH}</p>}
+                {errors.soilPH && <p className="text-xs text-red-600 font-medium">{errors.soilPH}</p>}
+                <p className="text-[11px] text-[#6B6B47]">
+                  Range: 6.0 to 7.5 is neutral to ideal for most Indian crops.
+                </p>
               </div>
 
-              {/* Previous Crop for Rotation */}
-              <div className="sm:col-span-2">
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                  🔄 Previously Harvested Crop <span className="text-slate-400 font-normal">(Used for Nitrogen & Rotation Scoring)</span>
+              {/* Previous Crop */}
+              <div className="space-y-1.5 sm:col-span-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-[#4A4A2E] block">
+                  Previously Harvested Crop
                 </label>
                 <select
                   name="previousCrop"
                   value={formData.previousCrop}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:bg-white focus:border-[#5FA83D] focus:ring-2 focus:ring-[#8BC56340] outline-none font-medium"
+                  className="w-full h-11 px-3.5 rounded-xl border border-[#E8E6D5] bg-[#FAFAF7] text-sm text-[#262619] font-medium focus:border-[#5FA83D] focus:ring-2 focus:ring-[#8BC56340] outline-none"
                 >
                   <option value="None">None / Fallow Land</option>
                   {PREVIOUS_CROPS.map(c => (
                     <option key={c} value={c}>{c}</option>
                   ))}
                 </select>
+                <p className="text-[11px] text-[#6B6B47]">
+                  Enables crop rotation algorithm to recommend nitrogen-replenishing companion crops.
+                </p>
               </div>
             </div>
           </div>
         )}
 
-        {/* STEP 3: RESOURCES */}
+        {/* STEP 3: WATER & IRRIGATION */}
         {currentStep === 2 && (
-          <div className="space-y-6 fade-in">
-            <div className="border-b border-slate-100 pb-4">
-              <h3 className="text-lg font-bold text-slate-900 font-display flex items-center gap-2">
-                <Droplets className="text-sky-600" size={20} />
-                <span>Irrigation & Farm Resources</span>
-              </h3>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Helps calculate water balance surplus/deficit and determine feasible input resource plans.
+          <div className="space-y-6">
+            <div className="border-b border-[#E8E6D5] pb-4">
+              <h2 className="text-xl font-bold text-[#262619] flex items-center gap-2">
+                <Droplets size={22} className="text-[#0284C7]" />
+                Step 3: Water Availability & Irrigation Method
+              </h2>
+              <p className="text-xs text-[#6B6B47] mt-1">
+                Ensures we do not recommend water-hungry crops if your water availability is limited.
               </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                  💧 Water Availability Level <span className="text-[#6B6B47]">*</span>
+              {/* Water Availability */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold uppercase tracking-wider text-[#4A4A2E] block">
+                  Water Availability *
                 </label>
                 <select
                   name="waterAvailability"
                   value={formData.waterAvailability}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold text-sky-900 focus:bg-white focus:border-[#5FA83D] focus:ring-2 focus:ring-[#8BC56340] outline-none"
+                  className="w-full h-11 px-3.5 rounded-xl border border-[#E8E6D5] bg-[#FAFAF7] text-sm text-[#262619] font-medium focus:border-[#5FA83D] focus:ring-2 focus:ring-[#8BC56340] outline-none"
                 >
                   {WATER_LEVELS.map(w => (
-                    <option key={w} value={w}>{w} Water Supply</option>
+                    <option key={w} value={w}>{w}</option>
                   ))}
                 </select>
-                {errors.waterAvailability && <p className="text-xs text-red-600 mt-1 font-medium">{errors.waterAvailability}</p>}
+                {errors.waterAvailability && <p className="text-xs text-red-600 font-medium">{errors.waterAvailability}</p>}
+                <p className="text-[11px] text-[#6B6B47]">
+                  {formData.waterAvailability === 'Medium' && 'Approx. 300,000 Liters available per acre for the season.'}
+                  {formData.waterAvailability === 'Low' && 'Approx. 150,000 Liters; best for drought-hardy crops like Mustard.'}
+                  {formData.waterAvailability === 'High' && 'Approx. 500,000 Liters; suited for sugarcane and paddy.'}
+                </p>
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                  🚿 Irrigation Technique <span className="text-[#6B6B47]">*</span>
+              {/* Irrigation Method */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold uppercase tracking-wider text-[#4A4A2E] block">
+                  Primary Irrigation Method *
                 </label>
                 <select
                   name="irrigationMethod"
                   value={formData.irrigationMethod}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:bg-white focus:border-[#5FA83D] focus:ring-2 focus:ring-[#8BC56340] outline-none font-medium"
+                  className="w-full h-11 px-3.5 rounded-xl border border-[#E8E6D5] bg-[#FAFAF7] text-sm text-[#262619] font-medium focus:border-[#5FA83D] focus:ring-2 focus:ring-[#8BC56340] outline-none"
                 >
                   {IRRIGATION_METHODS.map(m => (
-                    <option key={m} value={m}>{m} Irrigation</option>
+                    <option key={m} value={m}>{m}</option>
                   ))}
                 </select>
-                {errors.irrigationMethod && <p className="text-xs text-red-600 mt-1 font-medium">{errors.irrigationMethod}</p>}
+                {errors.irrigationMethod && <p className="text-xs text-red-600 font-medium">{errors.irrigationMethod}</p>}
+                <p className="text-[11px] text-[#6B6B47]">
+                  {formData.irrigationMethod === 'Drip' && 'Efficiency: 90%. Maximizes water savings.'}
+                  {formData.irrigationMethod === 'Flood' && 'Efficiency: 45%. Traditional furrow/canal flooding.'}
+                  {formData.irrigationMethod === 'Sprinkler' && 'Efficiency: 75%. Even water distribution.'}
+                </p>
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                  🧪 Fertilizer Availability
+              {/* Fertilizer & Labour Availability */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold uppercase tracking-wider text-[#4A4A2E] block">
+                  Fertilizer Access
                 </label>
                 <select
                   name="availableFertilizer"
                   value={formData.availableFertilizer}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:bg-white focus:border-[#5FA83D] focus:ring-2 focus:ring-[#8BC56340] outline-none"
+                  className="w-full h-11 px-3.5 rounded-xl border border-[#E8E6D5] bg-[#FAFAF7] text-sm text-[#262619] font-medium focus:outline-none"
                 >
-                  <option value="None">None / Organic Only</option>
-                  <option value="Limited">Limited (Basic NPK)</option>
-                  <option value="Adequate">Adequate (Standard Supply)</option>
-                  <option value="Abundant">Abundant (Full Nutrient Pack)</option>
+                  <option value="Limited">Limited (Basic Urea only)</option>
+                  <option value="Adequate">Adequate (NPK, Urea, DAP accessible)</option>
+                  <option value="Abundant">Abundant (Full micronutrients & organic compost)</option>
                 </select>
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                  👥 Farm Labour Availability
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold uppercase tracking-wider text-[#4A4A2E] block">
+                  Field Labour Availability
                 </label>
                 <select
                   name="availableLabour"
                   value={formData.availableLabour}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:bg-white focus:border-[#5FA83D] focus:ring-2 focus:ring-[#8BC56340] outline-none"
+                  className="w-full h-11 px-3.5 rounded-xl border border-[#E8E6D5] bg-[#FAFAF7] text-sm text-[#262619] font-medium focus:outline-none"
                 >
-                  <option value="Limited">Limited (Mechanized / Family only)</option>
-                  <option value="Moderate">Moderate (Partial hired labor)</option>
-                  <option value="Sufficient">Sufficient (Full field crew)</option>
+                  <option value="Limited">Limited (Owner operator / family only)</option>
+                  <option value="Moderate">Moderate (Seasonal casual workers)</option>
+                  <option value="Sufficient">Sufficient (Full field crew available)</option>
                 </select>
-              </div>
-
-              <div className="sm:col-span-2">
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                  💰 Optional Input Budget (₹ INR)
-                </label>
-                <input
-                  type="number"
-                  name="budget"
-                  value={formData.budget}
-                  onChange={handleChange}
-                  placeholder="50000"
-                  className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:bg-white focus:border-[#5FA83D] focus:ring-2 focus:ring-[#8BC56340] outline-none font-bold"
-                />
               </div>
             </div>
           </div>
         )}
 
-        {/* STEP 4: ENVIRONMENT */}
+        {/* STEP 4: SEASON & CLIMATE */}
         {currentStep === 3 && (
-          <div className="space-y-6 fade-in">
-            <div className="border-b border-slate-100 pb-4">
-              <h3 className="text-lg font-bold text-slate-900 font-display flex items-center gap-2">
-                <Sun className="text-amber-500" size={20} />
-                <span>Climatic & Environmental Metrics</span>
-              </h3>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Seasonal average temperatures and rainfall categories for thermal suitability modeling.
+          <div className="space-y-6">
+            <div className="border-b border-[#E8E6D5] pb-4">
+              <h2 className="text-xl font-bold text-[#262619] flex items-center gap-2">
+                <Sun size={22} className="text-[#E6A900]" />
+                Step 4: Target Season & Climate
+              </h2>
+              <p className="text-xs text-[#6B6B47] mt-1">
+                Aligns crop biological calendars with your local agricultural calendar.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                  🌡️ Average Ambient Temperature (°C) <span className="text-[#6B6B47]">*</span>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+              {/* Season */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold uppercase tracking-wider text-[#4A4A2E] block">
+                  Target Season *
                 </label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    step="1"
-                    name="temperature"
-                    value={formData.temperature}
-                    onChange={handleChange}
-                    placeholder="22"
-                    className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:bg-white focus:border-[#5FA83D] focus:ring-2 focus:ring-[#8BC56340] outline-none font-bold text-amber-900"
-                  />
-                  <span className="absolute right-4 top-3.5 text-xs font-bold text-slate-400">°C</span>
-                </div>
-                {errors.temperature && <p className="text-xs text-red-600 mt-1 font-medium">{errors.temperature}</p>}
+                <select
+                  name="season"
+                  value={formData.season}
+                  onChange={handleChange}
+                  className="w-full h-11 px-3.5 rounded-xl border border-[#E8E6D5] bg-[#FAFAF7] text-sm text-[#262619] font-medium focus:border-[#5FA83D] focus:ring-2 focus:ring-[#8BC56340] outline-none"
+                >
+                  {SEASONS.map(s => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
+                {errors.season && <p className="text-xs text-red-600 font-medium">{errors.season}</p>}
+                <p className="text-[11px] text-[#6B6B47]">
+                  {formData.season === 'Rabi' && 'Rabi: Winter season (Nov-Mar), cool nights.'}
+                  {formData.season === 'Kharif' && 'Kharif: Monsoon season (Jun-Oct), warm rain.'}
+                  {formData.season === 'Zaid' && 'Zaid: Summer window (Apr-Jun), dry heat.'}
+                </p>
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                  🌧️ Expected Rainfall Category <span className="text-[#6B6B47]">*</span>
+              {/* Temperature */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold uppercase tracking-wider text-[#4A4A2E] block">
+                  Avg. Ambient Temp (°C)
+                </label>
+                <input
+                  type="number"
+                  name="temperature"
+                  value={formData.temperature}
+                  onChange={handleChange}
+                  className="w-full h-11 px-3.5 rounded-xl border border-[#E8E6D5] bg-[#FAFAF7] text-sm text-[#262619] font-bold focus:border-[#5FA83D] focus:ring-2 focus:ring-[#8BC56340] outline-none"
+                />
+                <p className="text-[11px] text-[#6B6B47]">e.g. 20 °C for north India winter</p>
+              </div>
+
+              {/* Rainfall Category */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold uppercase tracking-wider text-[#4A4A2E] block">
+                  Expected Rainfall
                 </label>
                 <select
                   name="rainfall"
                   value={formData.rainfall}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:bg-white focus:border-[#5FA83D] focus:ring-2 focus:ring-[#8BC56340] outline-none font-medium"
+                  className="w-full h-11 px-3.5 rounded-xl border border-[#E8E6D5] bg-[#FAFAF7] text-sm text-[#262619] font-medium focus:outline-none"
                 >
                   {RAINFALL_CATEGORIES.map(r => (
-                    <option key={r} value={r}>{r} Rainfall</option>
+                    <option key={r} value={r}>{r}</option>
                   ))}
                 </select>
-                {errors.rainfall && <p className="text-xs text-red-600 mt-1 font-medium">{errors.rainfall}</p>}
+                <p className="text-[11px] text-[#6B6B47]">Low (&lt;400mm), Med (400-800mm), High (&gt;800mm)</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 5: REVIEW & GENERATE */}
+        {currentStep === 4 && (
+          <div className="space-y-6">
+            <div className="border-b border-[#E8E6D5] pb-4">
+              <h2 className="text-xl font-bold text-[#262619] flex items-center gap-2">
+                <ClipboardCheck size={22} className="text-[#5FA83D]" />
+                Step 5: Review Farm Inputs
+              </h2>
+              <p className="text-xs text-[#6B6B47] mt-1">
+                Verify all parameters before our 7-factor engine computes your tailored crop recommendations.
+              </p>
+            </div>
+
+            {errors.submit && (
+              <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium flex items-center gap-2">
+                <AlertCircle size={16} />
+                <span>{errors.submit}</span>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="p-4 rounded-2xl bg-[#FAFAF7] border border-[#E8E6D5] space-y-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#5C7A3C] block">
+                  Location & Scale
+                </span>
+                <p className="text-sm font-bold text-[#262619]">{formData.district}, {formData.state}</p>
+                <p className="text-xs text-[#6B6B47]">Area: {formData.landArea} {formData.landUnit}</p>
               </div>
 
-              <div className="sm:col-span-2">
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                  🌦 Relative Humidity Band
-                </label>
-                <select
-                  name="humidity"
-                  value={formData.humidity}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:bg-white focus:border-[#5FA83D] focus:ring-2 focus:ring-[#8BC56340] outline-none"
-                >
-                  <option value="Low">Low (&lt; 40%)</option>
-                  <option value="Medium">Medium (40% - 70%)</option>
-                  <option value="High">High (&gt; 70%)</option>
-                </select>
+              <div className="p-4 rounded-2xl bg-[#FAFAF7] border border-[#E8E6D5] space-y-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#5C7A3C] block">
+                  Soil Chemistry
+                </span>
+                <p className="text-sm font-bold text-[#262619]">{formData.soilType} Soil</p>
+                <p className="text-xs text-[#6B6B47]">pH {formData.soilPH} • Prev: {formData.previousCrop}</p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-[#FAFAF7] border border-[#E8E6D5] space-y-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#0284C7] block">
+                  Water & Method
+                </span>
+                <p className="text-sm font-bold text-[#262619]">{formData.waterAvailability} Availability</p>
+                <p className="text-xs text-[#6B6B47]">Method: {formData.irrigationMethod} Irrigation</p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-[#FAFAF7] border border-[#E8E6D5] space-y-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#E6A900] block">
+                  Cycle & Temperature
+                </span>
+                <p className="text-sm font-bold text-[#262619]">{formData.season} Season</p>
+                <p className="text-xs text-[#6B6B47]">{formData.temperature} °C • {formData.rainfall} Rainfall</p>
               </div>
             </div>
           </div>
         )}
 
         {/* ────────────────────────────────────────────────────────── */}
-        {/* WIZARD NAVIGATION FOOTER WITH BUTTONGROUP                  */}
+        {/* 4. NAVIGATION BUTTONS (STICKY BOTTOM)                      */}
         {/* ────────────────────────────────────────────────────────── */}
-        <div className="pt-6 border-t border-[#E6E4D7]">
-          <ButtonGroup align="between" spacing="md" responsive>
-            {currentStep > 0 ? (
-              <Button
-                variant="outline"
-                size="md"
-                onClick={handlePrev}
-                icon={ArrowLeft}
-              >
-                Previous Step
-              </Button>
-            ) : (
-              <div />
-            )}
+        <div className="flex items-center justify-between pt-6 border-t border-[#E8E6D5]">
+          {currentStep > 0 ? (
+            <Button
+              variant="outline"
+              size="md"
+              icon={ArrowLeft}
+              onClick={handlePrev}
+            >
+              {t('previous')}
+            </Button>
+          ) : <div />}
 
-            {currentStep < steps.length - 1 ? (
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={handleNext}
-                icon={ArrowRight}
-                iconPosition="right"
-              >
-                Continue Next
-              </Button>
-            ) : (
-              <Button
-                type="submit"
-                variant="accent"
-                size="lg"
-                loading={loading}
-                icon={Sparkles}
-                iconPosition="right"
-              >
-                Generate Farm Advisory Plan
-              </Button>
-            )}
-          </ButtonGroup>
+          {currentStep < steps.length - 1 ? (
+            <Button
+              variant="primary"
+              size="md"
+              icon={ArrowRight}
+              iconPosition="right"
+              onClick={handleNext}
+            >
+              {t('next')}
+            </Button>
+          ) : (
+            <Button
+              variant="accent"
+              size="lg"
+              icon={Sparkles}
+              type="submit"
+              loading={loading}
+            >
+              {loading ? t('loadingAdvisory') : t('generateNow')}
+            </Button>
+          )}
         </div>
       </form>
     </div>
@@ -743,4 +730,3 @@ const RecommendationForm = () => {
 };
 
 export default RecommendationForm;
-
