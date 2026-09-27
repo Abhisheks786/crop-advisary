@@ -3,7 +3,6 @@ import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import MobileNav from './MobileNav';
-import DemoModeBanner from '../Auth/DemoModeBanner';
 import { useAuth } from '../../hooks/useAuth';
 
 const MainLayout = () => {
@@ -11,7 +10,7 @@ const MainLayout = () => {
   const { user, logout } = useAuth();
 
   return (
-    <div className="min-h-screen bg-[#F7FAF5] flex font-sans text-slate-800">
+    <div className="min-h-screen bg-[#F6F4EC] flex font-sans text-slate-800">
       {/* Modern Dark Sidebar: Flex sibling on desktop, Drawer on mobile */}
       <Sidebar 
         isOpen={sidebarOpen} 
@@ -22,10 +21,6 @@ const MainLayout = () => {
       
       {/* Main Content Column */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Top Demo Mode Banner */}
-        <DemoModeBanner />
-        
-        {/* Header */}
         <Header 
           onToggleSidebar={() => setSidebarOpen(prev => !prev)} 
           user={user} 
