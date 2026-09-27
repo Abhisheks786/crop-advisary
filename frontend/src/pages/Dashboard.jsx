@@ -240,13 +240,22 @@ const Dashboard = () => {
       {/* ────────────────────────────────────────────────────────── */}
       {/* 3. QUESTION 1: WHAT SHOULD I PLANT? (HERO CARD)           */}
       {/* ────────────────────────────────────────────────────────── */}
-      <div className="bg-white rounded-3xl border-2 border-[#5FA83D]/40 shadow-sm p-6 sm:p-8 relative overflow-hidden">
-        <div className="absolute top-0 right-0 bg-[#5FA83D] text-white text-xs font-bold px-4 py-1.5 rounded-bl-2xl uppercase tracking-wider shadow-xs">
-          Top Recommendation
+      <div className="bg-white rounded-3xl border-2 border-[#5FA83D]/40 shadow-sm p-5 sm:p-7 relative overflow-hidden">
+        {/* Card Header Strip: Badge + Active Advisory indicator */}
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-5 pb-3 border-b border-[#E8E6D5]/70">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#5FA83D]/15 text-[#2E4A1E] text-xs font-bold border border-[#5FA83D]/30">
+            <Sparkles size={14} className="text-[#5FA83D]" />
+            <span>{t('whatShouldIPlant') || 'TOP CROP RECOMMENDATION'}</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-[#6B6B47]">
+            <span className="w-2 h-2 rounded-full bg-[#5FA83D] animate-ping" />
+            <span>AI Computed Advisory</span>
+          </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
+          {/* Left: Image & Crop Details */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 min-w-0">
             {/* Crop Photo / Visual */}
             <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-2 border-[#E8E6D5] shadow-xs shrink-0 bg-[#FAFAF7]">
               {cropVisual.imageUrl ? (
@@ -260,62 +269,67 @@ const Dashboard = () => {
                   {cropVisual.emoji}
                 </div>
               )}
-              <div className="absolute bottom-1 right-1 bg-white/90 backdrop-blur-xs text-xs px-1.5 py-0.5 rounded font-bold">
+              <div className="absolute bottom-1 right-1 bg-white/95 shadow-xs text-xs px-1.5 py-0.5 rounded-md font-bold text-[#262619]">
                 {cropVisual.emoji}
               </div>
             </div>
 
             {/* Crop Information */}
-            <div className="space-y-1.5">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#5C7A3C]">
-                {t('whatShouldIPlant')}
-              </span>
-              <div className="flex items-baseline gap-3">
-                <h2 className="text-3xl font-extrabold text-[#262619]">
+            <div className="space-y-1.5 min-w-0">
+              <div className="flex flex-wrap items-baseline gap-2 sm:gap-3">
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-[#262619] tracking-tight">
                   {primaryCrop.crop_name}
                 </h2>
                 <span className="text-sm font-semibold text-[#6B6B47]">
                   ({cropVisual.hindiName})
                 </span>
+                <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-[#F5F4EE] text-[#4A4A2E] border border-[#E8E6D5]">
+                  {primaryCrop.category || 'Cereal'}
+                </span>
               </div>
-              <p className="text-sm text-[#6B6B47] max-w-lg">
-                Best match for {farmInput.soilType} soil during {farmInput.season || 'Rabi'} with {farmInput.waterAvailability || 'Medium'} water availability.
+              
+              <p className="text-sm text-[#6B6B47] leading-relaxed max-w-xl">
+                Best match for <strong className="text-[#262619]">{farmInput.soilType}</strong> soil during <strong className="text-[#262619]">{farmInput.season || 'Rabi'}</strong> season with <strong className="text-[#262619]">{farmInput.waterAvailability || 'Medium'}</strong> water availability.
               </p>
-              <div className="flex flex-wrap gap-2 pt-1">
-                <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#5FA83D]/15 text-[#333320] border border-[#5FA83D]/30 flex items-center gap-1">
+              
+              <div className="flex flex-wrap gap-2 pt-1.5">
+                <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#5FA83D]/10 text-[#2E4A1E] border border-[#5FA83D]/30 flex items-center gap-1">
                   <Check size={13} className="text-[#5FA83D]" /> {farmInput.soilType} compatible
                 </span>
-                <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#5FA83D]/15 text-[#333320] border border-[#5FA83D]/30 flex items-center gap-1">
+                <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#5FA83D]/10 text-[#2E4A1E] border border-[#5FA83D]/30 flex items-center gap-1">
                   <Check size={13} className="text-[#5FA83D]" /> {farmInput.season || 'Rabi'} season
                 </span>
-                <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#0284C7]/15 text-[#0284C7] border border-[#0284C7]/30 flex items-center gap-1">
+                <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#0284C7]/10 text-[#0284C7] border border-[#0284C7]/30 flex items-center gap-1">
                   <Droplets size={13} /> {primaryCrop.water_requirement || 'Medium'} water
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Score & CTA */}
-          <div className="flex flex-row lg:flex-col items-center lg:items-end justify-between gap-4 pt-4 lg:pt-0 border-t lg:border-t-0 border-[#E8E6D5]">
-            <div className="flex items-center gap-3">
-              <div className="text-right">
-                <div className="text-3xl font-black text-[#5FA83D]">
+          {/* Right: Score Card & Action Buttons */}
+          <div className="flex flex-col sm:flex-row xl:flex-col items-start sm:items-center xl:items-end justify-between gap-4 pt-4 xl:pt-0 border-t xl:border-t-0 border-[#E8E6D5] shrink-0">
+            {/* Score Pill */}
+            <div className="flex items-center gap-3 bg-[#FAFAF7] p-2.5 sm:p-3 rounded-2xl border border-[#E8E6D5]">
+              <div className="text-left sm:text-right">
+                <div className="text-2xl sm:text-3xl font-black text-[#5FA83D] leading-none">
                   {primaryCrop.suitability_score}%
                 </div>
-                <div className="text-xs font-bold text-[#6B6B47]">
+                <div className="text-[11px] font-bold text-[#6B6B47] uppercase tracking-wider mt-0.5">
                   {primaryCrop.suitability_label || 'Highly Suitable'}
                 </div>
               </div>
-              <div className="w-14 h-14 rounded-2xl bg-[#5FA83D]/10 border border-[#5FA83D]/30 flex items-center justify-center text-[#5FA83D]">
-                <Sparkles size={28} />
+              <div className="w-12 h-12 rounded-xl bg-[#5FA83D]/15 border border-[#5FA83D]/30 flex items-center justify-center text-[#5FA83D]">
+                <Sparkles size={24} />
               </div>
             </div>
 
-            <ButtonGroup spacing="sm" responsive={false}>
+            {/* Action Buttons */}
+            <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
               <Button 
                 variant="outline" 
                 size="md" 
                 onClick={() => navigate(topRec?._id ? `/results/${topRec._id}` : '/results')}
+                className="flex-1 sm:flex-none justify-center"
               >
                 {t('viewAdvisory')}
               </Button>
@@ -324,10 +338,11 @@ const Dashboard = () => {
                 size="md" 
                 icon={FileText}
                 onClick={() => navigate(topRec?._id ? `/plan/${topRec._id}` : '/plan')}
+                className="flex-1 sm:flex-none justify-center shadow-sm"
               >
                 {t('viewFullPlan')}
               </Button>
-            </ButtonGroup>
+            </div>
           </div>
         </div>
       </div>
