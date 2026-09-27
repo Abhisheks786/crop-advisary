@@ -1,0 +1,65 @@
+[
+  {
+    "soil_type": "Sandy",
+    "ph_range": {"min": 4.5, "max": 7.0},
+    "water_retention": "Low",
+    "drainage": "Good",
+    "nutrient_retention": "Low",
+    "suitable_crops": ["Groundnut", "Bajra", "Potato"],
+    "description": "Sandy soils have large particles, high drainage, and low water retention, suitable for drought-resistant crops."
+  },
+  {
+    "soil_type": "Loamy",
+    "ph_range": {"min": 6.0, "max": 7.0},
+    "water_retention": "Medium",
+    "drainage": "Good",
+    "nutrient_retention": "High",
+    "suitable_crops": ["Wheat", "Maize", "Cotton", "Sugarcane", "Tomato"],
+    "description": "Loam is a mixture of sand, silt, and clay. It holds moisture well while draining freely, ideal for most crops."
+  },
+  {
+    "soil_type": "Clay",
+    "ph_range": {"min": 5.5, "max": 7.5},
+    "water_retention": "High",
+    "drainage": "Poor",
+    "nutrient_retention": "High",
+    "suitable_crops": ["Rice"],
+    "description": "Clay soils hold a high amount of water but have poor drainage, making them ideal for paddy cultivation."
+  },
+  {
+    "soil_type": "Sandy Loam",
+    "ph_range": {"min": 5.5, "max": 7.5},
+    "water_retention": "Medium",
+    "drainage": "Good",
+    "nutrient_retention": "Medium",
+    "suitable_crops": ["Maize", "Mustard", "Chickpea", "Lentil", "Groundnut", "Potato", "Tomato"],
+    "description": "Contains a high percentage of sand, mixed with silt and clay. Good drainage and moderate nutrient retention."
+  },
+  {
+    "soil_type": "Clay Loam",
+    "ph_range": {"min": 6.0, "max": 7.5},
+    "water_retention": "High",
+    "drainage": "Moderate",
+    "nutrient_retention": "High",
+    "suitable_crops": ["Wheat", "Rice", "Cotton", "Sugarcane", "Chickpea", "Soybean", "Jowar"],
+    "description": "Combines the benefits of clay's nutrient retention and loam's better workability."
+  },
+  {
+    "soil_type": "Black Soil",
+    "ph_range": {"min": 6.5, "max": 8.5},
+    "water_retention": "High",
+    "drainage": "Poor",
+    "nutrient_retention": "Very High",
+    "suitable_crops": ["Cotton", "Soybean", "Jowar"],
+    "description": "Rich in calcium, potassium, and magnesium, highly moisture-retentive, ideal for cotton."
+  },
+  {
+    "soil_type": "Alluvial Soil",
+    "ph_range": {"min": 6.0, "max": 8.0},
+    "water_retention": "Medium",
+    "drainage": "Moderate",
+    "nutrient_retention": "High",
+    "suitable_crops": ["Wheat", "Rice", "Maize", "Sugarcane", "Potato"],
+    "description": "Formed by deposited river silt, extremely fertile and supports a wide variety of crops in Northern India."
+  }
+]

@@ -1,0 +1,47 @@
+[
+  {
+    "method": "Flood irrigation",
+    "efficiency_percent": {"min": 40, "max": 50},
+    "water_usage": "High",
+    "cost_level": "Low",
+    "suitable_crops": ["Rice", "Wheat", "Sugarcane"],
+    "suitable_land_size": "Large",
+    "description": "Water is applied and distributed over the soil surface by gravity. Low efficiency but common in areas with ample water."
+  },
+  {
+    "method": "Drip irrigation",
+    "efficiency_percent": {"min": 85, "max": 95},
+    "water_usage": "Low",
+    "cost_level": "High",
+    "suitable_crops": ["Tomato", "Cotton", "Sugarcane", "Groundnut"],
+    "suitable_land_size": "Any",
+    "description": "Water drips slowly to the roots of plants. Highly efficient, saves water and fertilizer."
+  },
+  {
+    "method": "Sprinkler",
+    "efficiency_percent": {"min": 70, "max": 80},
+    "water_usage": "Medium",
+    "cost_level": "Medium",
+    "suitable_crops": ["Wheat", "Mustard", "Chickpea", "Potato", "Groundnut"],
+    "suitable_land_size": "Medium to Large",
+    "description": "Water is sprayed into the air and falls like rain. Suitable for most crops except paddy."
+  },
+  {
+    "method": "Furrow",
+    "efficiency_percent": {"min": 50, "max": 60},
+    "water_usage": "Medium-High",
+    "cost_level": "Low",
+    "suitable_crops": ["Maize", "Cotton", "Sugarcane", "Potato", "Tomato"],
+    "suitable_land_size": "Medium",
+    "description": "Small parallel channels are created along the field length. Suitable for row crops."
+  },
+  {
+    "method": "Manual",
+    "efficiency_percent": {"min": 30, "max": 40},
+    "water_usage": "High",
+    "cost_level": "Very Low",
+    "suitable_crops": ["Vegetables"],
+    "suitable_land_size": "Small",
+    "description": "Manual watering using basic tools. Suitable only for very small plots or kitchen gardens."
+  }
+]

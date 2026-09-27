@@ -1,0 +1,160 @@
+@import 'tailwindcss';
+
+@theme {
+  /* Olive-Greenish Agri Palette */
+  --color-olive-50: #FAFAF7;
+  --color-olive-100: #F5F4EE;
+  --color-olive-200: #E6E4D7;
+  --color-olive-300: #D1CDBC;
+  --color-olive-400: #A8A38E;
+  --color-olive-500: #7E7A65;
+  --color-olive-600: #6B6B47;
+  --color-olive-700: #4A4A2E;
+  --color-olive-800: #363622;
+  --color-olive-900: #262619;
+
+  --color-sage-50: #F4F7F2;
+  --color-sage-100: #E6EDE0;
+  --color-sage-200: #CCDCBF;
+  --color-sage-300: #ADC59B;
+  --color-sage-400: #8CA877;
+  --color-sage-500: #6F8E57;
+  --color-sage-600: #5C7A3C;
+  --color-sage-700: #46602D;
+  --color-sage-800: #344822;
+  --color-sage-900: #213016;
+
+  --color-leaf-50: #F2F9F0;
+  --color-leaf-100: #E1F2DC;
+  --color-leaf-200: #C2E4B8;
+  --color-leaf-300: #9DD48E;
+  --color-leaf-400: #7AC164;
+  --color-leaf-500: #5FA83D;
+  --color-leaf-600: #48882C;
+  --color-leaf-700: #366921;
+  --color-leaf-800: #264A17;
+  --color-leaf-900: #172F0E;
+
+  --color-forest-50: #EFF7F0;
+  --color-forest-100: #D9EDDC;
+  --color-forest-200: #B2DAB9;
+  --color-forest-300: #85C28F;
+  --color-forest-400: #5AA767;
+  --color-forest-500: #3F8A4C;
+  --color-forest-600: #3A6E38;
+  --color-forest-700: #274D27;
+  --color-forest-800: #1C381C;
+  --color-forest-900: #122412;
+
+  --color-clay-50: #FBF8F5;
+  --color-clay-100: #F5EFE8;
+  --color-clay-200: #EADBCE;
+  --color-clay-300: #DCC3B1;
+  --color-clay-400: #C7A690;
+  --color-clay-500: #AF8870;
+  --color-clay-600: #936B53;
+  --color-clay-700: #75503B;
+  --color-clay-800: #573A2A;
+  --color-clay-900: #3A251B;
+
+  /* Semantic Status Colors */
+  --color-status-success: #48A348;
+  --color-status-warning: #E6A900;
+  --color-status-error: #DC2626;
+  --color-status-info: #0284C7;
+
+  /* Aliases for core themes */
+  --color-agri-dark: #12372A;
+  --color-agri-forest: #14532D;
+  --color-agri-primary: #15803D;
+  --color-agri-leaf: #22C55E;
+  --color-agri-mint: #86EFAC;
+  --color-agri-sage: #DCFCE7;
+  --color-agri-cream: #FEFCE8;
+  --color-agri-bg: #FAFAF7;
+  --color-agri-surface: #FFFFFF;
+  --color-agri-border: #E6E4D7;
+  
+  --color-water: #0284C7;
+  --color-water-light: #E0F2FE;
+  --color-soil: #92400E;
+  --color-soil-light: #FEF3C7;
+  --color-weather: #F59E0B;
+  --color-weather-light: #FFFBEB;
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--color-agri-bg);
+  color: #262619;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, .font-heading {
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* Glass & Elevation Utilities */
+.glass-card {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(230, 228, 215, 0.8);
+}
+
+.hover-lift {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px -5px rgba(74, 74, 46, 0.12), 0 5px 10px -5px rgba(74, 74, 46, 0.08);
+}
+
+/* Shimmer animation for skeletons and loading states */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, #F5F4EE 25%, #E6E4D7 50%, #F5F4EE 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F5F4EE;
+}
+::-webkit-scrollbar-thumb {
+  background: #D1CDBC;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #A8A38E;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.35s ease-out forwards;
+}

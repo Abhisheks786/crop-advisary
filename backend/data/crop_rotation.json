@@ -1,0 +1,142 @@
+[
+  {
+    "crop_name": "Wheat",
+    "good_predecessors": ["Rice", "Soybean", "Maize", "Cotton", "Groundnut"],
+    "bad_predecessors": ["Wheat", "Barley"],
+    "good_successors": ["Mungbean", "Maize", "Rice"],
+    "bad_successors": ["Wheat"],
+    "rotation_benefits": "Breaks disease cycles and utilizes residual moisture when following kharif crops.",
+    "soil_impact": "Depletes",
+    "nitrogen_fixing": false
+  },
+  {
+    "crop_name": "Rice",
+    "good_predecessors": ["Wheat", "Potato", "Mustard", "Chickpea"],
+    "bad_predecessors": ["Rice"],
+    "good_successors": ["Wheat", "Chickpea", "Lentil", "Mustard"],
+    "bad_successors": ["Rice"],
+    "rotation_benefits": "Alternating with legumes (like chickpea) helps replenish soil nitrogen.",
+    "soil_impact": "Depletes",
+    "nitrogen_fixing": false
+  },
+  {
+    "crop_name": "Maize",
+    "good_predecessors": ["Chickpea", "Mustard", "Potato"],
+    "bad_predecessors": ["Sorghum", "Maize"],
+    "good_successors": ["Wheat", "Chickpea", "Mustard"],
+    "bad_successors": ["Sorghum"],
+    "rotation_benefits": "Helps in weed control and improves soil structure when rotated with legumes.",
+    "soil_impact": "Depletes",
+    "nitrogen_fixing": false
+  },
+  {
+    "crop_name": "Mustard",
+    "good_predecessors": ["Rice", "Maize", "Pearl Millet"],
+    "bad_predecessors": ["Mustard", "Cabbage"],
+    "good_successors": ["Mungbean", "Cotton", "Maize"],
+    "bad_successors": ["Cabbage"],
+    "rotation_benefits": "Its deep taproot helps in bringing nutrients up from lower soil layers.",
+    "soil_impact": "Neutral",
+    "nitrogen_fixing": false
+  },
+  {
+    "crop_name": "Cotton",
+    "good_predecessors": ["Wheat", "Sorghum", "Groundnut"],
+    "bad_predecessors": ["Cotton", "Okra"],
+    "good_successors": ["Wheat", "Chickpea", "Jowar"],
+    "bad_successors": ["Okra"],
+    "rotation_benefits": "Alternating with cereals breaks pest cycles (e.g., bollworm).",
+    "soil_impact": "Depletes",
+    "nitrogen_fixing": false
+  },
+  {
+    "crop_name": "Sugarcane",
+    "good_predecessors": ["Wheat", "Mustard", "Potato"],
+    "bad_predecessors": ["Sugarcane"],
+    "good_successors": ["Wheat", "Legumes"],
+    "bad_successors": ["Sugarcane"],
+    "rotation_benefits": "High biomass crop; rotating with legumes restores soil fertility.",
+    "soil_impact": "Depletes",
+    "nitrogen_fixing": false
+  },
+  {
+    "crop_name": "Chickpea",
+    "good_predecessors": ["Rice", "Maize", "Pearl Millet", "Sorghum"],
+    "bad_predecessors": ["Chickpea", "Lentil", "Pea"],
+    "good_successors": ["Rice", "Maize", "Cotton"],
+    "bad_successors": ["Lentil"],
+    "rotation_benefits": "Fixes atmospheric nitrogen, greatly enriching soil for the subsequent cereal crop.",
+    "soil_impact": "Improves",
+    "nitrogen_fixing": true
+  },
+  {
+    "crop_name": "Lentil",
+    "good_predecessors": ["Rice", "Maize", "Pearl Millet"],
+    "bad_predecessors": ["Lentil", "Chickpea"],
+    "good_successors": ["Rice", "Maize"],
+    "bad_successors": ["Chickpea"],
+    "rotation_benefits": "Excellent nitrogen fixer, improves soil health and structure.",
+    "soil_impact": "Improves",
+    "nitrogen_fixing": true
+  },
+  {
+    "crop_name": "Soybean",
+    "good_predecessors": ["Wheat", "Chickpea", "Potato"],
+    "bad_predecessors": ["Soybean", "Groundnut"],
+    "good_successors": ["Wheat", "Chickpea", "Mustard"],
+    "bad_successors": ["Groundnut"],
+    "rotation_benefits": "Fixes significant amounts of nitrogen and leaves nutrient-rich residues.",
+    "soil_impact": "Improves",
+    "nitrogen_fixing": true
+  },
+  {
+    "crop_name": "Groundnut",
+    "good_predecessors": ["Wheat", "Sorghum", "Pearl Millet"],
+    "bad_predecessors": ["Groundnut", "Soybean"],
+    "good_successors": ["Wheat", "Sorghum", "Mustard"],
+    "bad_successors": ["Soybean"],
+    "rotation_benefits": "Legume crop that builds up soil nitrogen reserves.",
+    "soil_impact": "Improves",
+    "nitrogen_fixing": true
+  },
+  {
+    "crop_name": "Potato",
+    "good_predecessors": ["Maize", "Paddy", "Green Gram"],
+    "bad_predecessors": ["Potato", "Tomato", "Eggplant"],
+    "good_successors": ["Maize", "Paddy", "Legumes"],
+    "bad_successors": ["Tomato", "Eggplant"],
+    "rotation_benefits": "Heavy feeder; must be rotated with cereals or legumes to avoid nematode buildup.",
+    "soil_impact": "Depletes",
+    "nitrogen_fixing": false
+  },
+  {
+    "crop_name": "Tomato",
+    "good_predecessors": ["Wheat", "Maize", "Legumes"],
+    "bad_predecessors": ["Tomato", "Potato", "Chili", "Eggplant"],
+    "good_successors": ["Cereals", "Legumes"],
+    "bad_successors": ["Potato", "Chili", "Eggplant"],
+    "rotation_benefits": "Must rotate out of solanaceous family to prevent soil-borne diseases.",
+    "soil_impact": "Depletes",
+    "nitrogen_fixing": false
+  },
+  {
+    "crop_name": "Bajra",
+    "good_predecessors": ["Legumes", "Mustard", "Chickpea"],
+    "bad_predecessors": ["Bajra", "Sorghum"],
+    "good_successors": ["Chickpea", "Mustard", "Lentil"],
+    "bad_successors": ["Sorghum"],
+    "rotation_benefits": "Deep root system utilizes residual moisture; follows well after legumes.",
+    "soil_impact": "Neutral",
+    "nitrogen_fixing": false
+  },
+  {
+    "crop_name": "Jowar",
+    "good_predecessors": ["Cotton", "Groundnut", "Pigeon Pea"],
+    "bad_predecessors": ["Jowar", "Bajra"],
+    "good_successors": ["Cotton", "Groundnut", "Chickpea"],
+    "bad_successors": ["Bajra"],
+    "rotation_benefits": "Breaks pest cycles in cotton regions; benefits from nitrogen left by legumes.",
+    "soil_impact": "Depletes",
+    "nitrogen_fixing": false
+  }
+]
